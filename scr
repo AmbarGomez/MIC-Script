@@ -1,1 +1,151 @@
+#Importing data
+MIC <- read.delim("Dataset-MIC.txt")
+
+#Observing data
+# View(MIC)
+str(MIC)
+head(MIC)
+
+#Mean and SD
+require("dplyr")
+
+summary.MIC <- na.omit(MIC) %>%
+               group_by(Cepa, Ant, Vol) %>%
+               summarize(mean = mean(Rad), 
+               sd = sd(Rad),
+               n = n(),
+               se = sd(Rad)
+               ); summary.MIC
+
+
+#Anova Radio
+aov.MIC <- aov(Rad ~ Ant * Cepa, 
+                  data = MIC); summary(aov.MIC)
+#Sig data in all parameters and in combination of parameters
+
+shapiro.test(aov.MIC$residuals) # p > 0.05 Residual distribution is normal
+
+# Tukey Radio ####
+T.aov.MIC <- TukeyHSD(aov.MIC); TukeyHSD(aov.MIC); plot(T.aov.MIC)
+
+#ANOVA Vol
+aov.MIC <- aov(Rad ~ Vol * Ant, 
+               data = MIC); summary(aov.MIC)
+#Sig data in all parameters and in combination of parameters
+
+shapiro.test(aov.MIC$residuals) # p > 0.05 Residual distribution is normal
+
+# Tukey Vol ####
+T.aov.MIC <- TukeyHSD(aov.MIC); TukeyHSD(aov.MIC); plot(T.aov.MIC)
+
+
+# GGplot MIC ####
+require("tidyverse")
+require("ggplot2")
+library(ggplot2)
+
+# Box plot for all MIC data set 
+#MIC.plot <- ggplot(MIC, aes(x = Vol, y = Rad, fill = Cepa)) +
+ # geom_boxplot() +
+  #scale_x_discrete(name = "Cepa") +
+  #scale_y_continuous(name = "Antibiotico") +
+  #ggtitle("Khestapasanda") ; MIC.plot
+
+
+# Sub-setting data by strain
+
+HF8B <- MIC[MIC$Cepa == "HF8B",]
+K115 <- MIC[MIC$Cepa == "K115",]
+RA1B <- MIC[MIC$Cepa == "RA1B",]
+INP22B <- MIC[MIC$Cepa == "INP22B",]
+AeR106.3 <- MIC[MIC$Cepa == "AeR106-3",]
+AeR96.2 <- MIC[MIC$Cepa == "AeR96-2",]
+AeR97.1 <- MIC[MIC$Cepa == "AeR97-1",]
+AL3A <- MIC[MIC$Cepa == "AL3A",]
+INP12A <- MIC[MIC$Cepa == "INP12A",]
+
+
+# Box plot by strain 
+library(ggpubr)
+ 
+ggarrange(HF8B.plot, K115.plot, RA1B.plot, INP22B.plot, AeR106.3.plot, AeR96.2.plot,
+          AeR97.1.plot, AL3A.plot, INP12A.plot, 
+          ncol = 3, nrow = 3,  align = "hv", 
+          #widths = c(2, 1), heights = c(1, 2),
+          common.legend = TRUE)
+
+HF8B.plot <- ggplot(HF8B, aes(x = Vol, y = Rad, fill = Ant)) + theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("HF8B") ; HF8B.plot
+
+K115.plot <- ggplot(K115, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none") +
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("K115") ; K115.plot
+
+RA1B.plot <- ggplot(RA1B, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("RA1B")  ; RA1B.plot
+
+INP22B.plot <- ggplot(INP22B, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("INP22B")
+
+AeR106.3.plot <- ggplot(AeR106.3, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("AeR106-3")
+
+AeR96.2.plot <- ggplot(AeR96.2, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("AeR96-2")
+
+AeR97.1.plot <- ggplot(AeR97.1, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("AeR97-1")
+
+AL3A.plot <- ggplot(AL3A, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("AL3A")
+
+INP12A.plot <- ggplot(INP12A, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("INP12A") ; INP12A.plot
+        
+
+## Filtering data by antibiotic 
+Amp <- filter(MIC, MIC$Ant == "Ampicilina (Amp)"); Amp
+
+summary.Amp <- na.omit(Amp) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Amp
+view(summary.Amp)
+
+Amp.plot <- ggplot(Amp, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio MIC (mm)") +
+  ggtitle("Ampicilina") ; Amp.plot
+
+
 
