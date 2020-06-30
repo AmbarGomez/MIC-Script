@@ -130,22 +130,22 @@ INP12A.plot <- ggplot(INP12A, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend
         
 
 ## Filtering data by antibiotic 
-Amp <- filter(MIC, MIC$Ant == "Ampicilina (Amp)"); Amp
+Car <- filter(MIC, MIC$Ant == "Carbenicilina (Car)"); Car
 
-summary.Amp <- na.omit(Amp) %>%
+summary.Car <- na.omit(Amp) %>%
   group_by(Cepa, Ant, Vol) %>%
   summarize(mean = mean(Rad), 
             sd = sd(Rad),
             n = n(),
             se = sd(Rad)
   ); summary.Amp
-view(summary.Amp)
 
-Amp.plot <- ggplot(Amp, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.position = "bottom")+
+
+Car.plot <- ggplot(Car, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.position = "bottom")+
   geom_boxplot() +
   scale_x_discrete(name = "Antibiotico") +
   scale_y_continuous(name = "Radio MIC (mm)") +
-  ggtitle("Ampicilina") ; Amp.plot
+  ggtitle("Carbenicilina") ; Car.plot
 
 
 
