@@ -141,7 +141,7 @@ summary.Amp <- na.omit(Amp) %>%
   ); summary.Amp
 view(summary.Amp)
 
-Amp.plot <- ggplot(Amp, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.position = "none")+
+Amp.plot <- ggplot(Amp, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.position = "bottom")+
   geom_boxplot() +
   scale_x_discrete(name = "Antibiotico") +
   scale_y_continuous(name = "Radio MIC (mm)") +
