@@ -132,13 +132,13 @@ INP12A.plot <- ggplot(INP12A, aes(x = Vol, y = Rad, fill = Ant)) +  theme(legend
 ## Filtering data by antibiotic 
 Car <- filter(MIC, MIC$Ant == "Carbenicilina (Car)"); Car
 
-summary.Car <- na.omit(Amp) %>%
+summary.Car <- na.omit(Car) %>%
   group_by(Cepa, Ant, Vol) %>%
   summarize(mean = mean(Rad), 
             sd = sd(Rad),
             n = n(),
             se = sd(Rad)
-  ); summary.Amp
+  ); summary.Car
 
 
 Car.plot <- ggplot(Car, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.position = "bottom")+
