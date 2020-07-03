@@ -147,5 +147,116 @@ Car.plot <- ggplot(Car, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.posi
   scale_y_continuous(name = "Radio MIC (mm)") +
   ggtitle("Carbenicilina") ; Car.plot
 
+##### Data by antibiotic
+
+MIC2 <- read.delim("Dataset-MIC.txt")
+Amp <- filter(MIC2, MIC2$Ant == "Ampicilina (Amp)"); Amp
+
+summary.Amp <- na.omit(Amp) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Amp
+view(summary.Amp)
+
+Car <- filter(MIC2, MIC2$Ant == "Carbenicilina (Car)"); Car
+
+summary.Car <- na.omit(Car) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Car
+
+Apra <- filter(MIC2, MIC2$Ant == "Apramicina (Apra)"); Apra
+
+summary.Apra <- na.omit(Apra) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Apra
+
+Nm <- filter(MIC2, MIC2$Ant == "Neomicina (Nm)"); Nm
+
+summary.Nm <- na.omit(Nm) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Nm
+
+Gm <- filter(MIC2, MIC2$Ant == "Gentamicina (Gm)"); Gm
+
+summary.Gm <- na.omit(Gm) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Gm
+
+Cm <- filter(MIC2, MIC2$Ant == "Cloramfenicol (Cm)"); Cm
+
+summary.Cm <- na.omit(Cm) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.Cm
+
+
+#ploting the summary (mean of the diameter)
+library(ggplot2)
+library(ggpubr)
+
+ggarrange(Amp.plot, Apra.plot, Car.plot, Nm.plot, Gm.plot, Cm.plot,
+          ncol = 3, nrow = 2,  align = "hv", 
+          #widths = c(2, 1), heights = c(1, 2),
+          legend = "top")
+         
+
+
+Amp.plot <- ggplot(summary.Amp, aes(x = Vol, y = summary.Amp$mean, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio (mm)") +
+  ggtitle("Ampicilina") ; Amp.plot
+
+Apra.plot <- ggplot(summary.Apra, aes(x = Vol, y = summary.Apra$mean, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio (mm)") +
+  ggtitle("Apramicina") ; Apra.plot
+
+Car.plot <- ggplot(summary.Car, aes(x = Vol, y = summary.Car$mean, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio (mm)") +
+  ggtitle("Carbenicilina") ; Car.plot
+
+Nm.plot <- ggplot(summary.Nm, aes(x = Vol, y = summary.Nm$mean, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio (mm)") +
+  ggtitle("Neomicina") ; Nm.plot
+
+Gm.plot <- ggplot(summary.Gm, aes(x = Vol, y = summary.Gm$mean, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio (mm)") +
+  ggtitle("Gentamicina") ; Gm.plot
+
+Cm.plot <- ggplot(summary.Cm, aes(x = Vol, y = summary.Cm$mean, fill = Cepa)) +  theme(legend.position = "none")+
+  geom_boxplot() +
+  scale_x_discrete(name = "Antibiotico") +
+  scale_y_continuous(name = "Radio (mm)") +
+  ggtitle("Cloranfenicol") ; Cm.plot
 
 
