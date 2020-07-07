@@ -150,6 +150,28 @@ Car.plot <- ggplot(Car, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.posi
 ##### Data by antibiotic
 
 MIC2 <- read.delim("Dataset-MIC.txt")
+
+summary.MIC <- na.omit(MIC2) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(mean = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.MIC
+
+filter <- summary.MIC %>%
+  filter(mean >= 10 ) %>% # Filter by mean radious
+  group_by(Cepa, Ant) %>%
+  mutate(minVol = min(Vol)) %>% 
+  filter(Vol == minVol) # Filter to keep the minimum volume
+View(filter)
+
+
+
+
+
+
+### pendiente hasta que salga el filtro 
 Amp <- filter(MIC2, MIC2$Ant == "Ampicilina (Amp)"); Amp
 
 summary.Amp <- na.omit(Amp) %>%
