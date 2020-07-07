@@ -1,5 +1,5 @@
 #Importing data
-MIC <- read.delim("Dataset-MIC.txt")
+MIC <- read.delim("../Dataset-MIC.txt")
 
 #Observing data
 # View(MIC)
@@ -149,22 +149,37 @@ Car.plot <- ggplot(Car, aes(x = Vol, y = Rad, fill = Cepa)) +  theme(legend.posi
 
 ##### Data by antibiotic
 
-MIC2 <- read.delim("Dataset-MIC.txt")
+MIC2 <- read.delim("../Dataset-MIC.txt")
 
 summary.MIC <- na.omit(MIC2) %>%
   group_by(Cepa, Ant, Vol) %>%
-  summarize(mean = mean(Rad), 
+  summarize(meanInhib = mean(Rad), 
             sd = sd(Rad),
             n = n(),
             se = sd(Rad)
   ); summary.MIC
 
-filter <- summary.MIC %>%
-  filter(mean >= 10 ) %>% # Filter by mean radious
+summary.MIC[summary.MIC$meanInhib>10,] 
+
+# Filtar que volumen me da un halo con valor a 10, y si ningun volumen 
+# da un halo con valor igual o mayor que 10, que arroje el volumen máximo
+
+
+VolInhibMinAlo <- summary.MIC %>%
   group_by(Cepa, Ant) %>%
-  mutate(minVol = min(Vol)) %>% 
-  filter(Vol == minVol) # Filter to keep the minimum volume
-View(filter)
+  mutate( Vol=case_when( max(meanInhib)<10 ~ max(Vol), max(meanInhib)>=10 ~ Vol)) %>%
+  mutate( meanInhib_F=case_when( max(meanInhib)<10 ~ 10, max(meanInhib)>=10 ~ meanInhib )) %>%
+  filter(meanInhib_F >= 10 ) %>% # Filter by mean radious
+  mutate( minVol=min(Vol)) %>%
+  mutate( meanInhib_F2= min(min(meanInhib_F),max(meanInhib)) )%>%
+  select(Cepa, Ant, minVol,meanInhib_F2)%>%
+  group_by(Cepa, Ant)%>%summarize(minVol = mean(minVol),Alo=mean(meanInhib_F2)) 
+  
+ # filter(Vol == minVol) # Filter to keep the minimum volume
+
+  
+  
+  View(VolInhibMinAlo)
 
 
 

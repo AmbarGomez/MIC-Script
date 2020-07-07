@@ -1,0 +1,48 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+# Ejemplo de Alo
+
+<!-- primero cargo librerias !-->
+
+```{r librerias}
+# Aqui van al principio todas las librerias que utilizo
+require("dplyr") #Mean and SD
+```
+
+Ahora muestro el mínimo volumen para obtener 10 de Alo Inhibitorio.  
+Cuando no se alcanza esta concentración pongo el volumen que me da la máxima inhibición, y anoto cuánto mide el Alo.
+
+```{r Min_Vol_para_Aloen10_o_loMasGrandeQueQuedoelALO}
+##### Data by antibiotic
+MIC2 <- read.delim("../Dataset-MIC.txt")
+
+
+##### Aqui anota que hiciste 
+summary.MIC <- na.omit(MIC2) %>%
+  group_by(Cepa, Ant, Vol) %>%
+  summarize(meanInhib = mean(Rad), 
+            sd = sd(Rad),
+            n = n(),
+            se = sd(Rad)
+  ); summary.MIC
+
+
+# Filtar que volumen me da un halo con valor a 10, y si ningun volumen 
+# da un halo con valor igual o mayor que 10, que arroje el volumen máximo
+VolInhibMinAlo <- summary.MIC %>%  #cargo el dataframe
+  group_by(Cepa, Ant) %>%         # parto en dataframes que comparten cepa y antibiotico
+  mutate( Vol=case_when( max(meanInhib)<10 ~ max(Vol), max(meanInhib)>=10 ~ Vol)) %>% # si no alcanzo 10 inhibicion pongo todos los volumenes al máximo volumen
+  mutate( meanInhib_F=case_when( max(meanInhib)<10 ~ 10, max(meanInhib)>=10 ~ meanInhib )) %>% # Si no alcnazo 10 Inhi Hago la variabl meanInhib_F que posteriormente me servira para filtrar, le pongo 10 en esta variable a los que su max inhibicion es menor a 10
+  filter(meanInhib_F >= 10 ) %>% # Filter por "falso maximo inhibicion"
+  mutate( minVol=min(Vol)) %>%  # en cada caso obtengo el minimo volumen
+  mutate( meanInhib_F2= min(min(meanInhib_F),max(meanInhib)) )%>% # obtengo inhibicion verdadera en esta variable meanInhib_F2
+  select(Cepa, Ant, minVol,meanInhib_F2)%>% #Selecciono inhibicion y volumen
+  group_by(Cepa, Ant)%>%summarize(minVol = mean(minVol),Alo=mean(meanInhib_F2)) # tanto minVol como menaInhib2 son constantes, asi que la media es solo para obtener valores unicos
+
+VolInhibMinAlo
+  
+```
+
